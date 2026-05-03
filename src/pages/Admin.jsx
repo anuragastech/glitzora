@@ -8,39 +8,70 @@ function Admin() {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const API = "https://glitzorabackend.onrender.com/api/products";
 
+  // FETCH PRODUCTS
   const fetchProducts = async () => {
-    const res = await axios.get(API);
-    setProducts(res.data.products || res.data); // works for both cases
+    try {
+      const res = await axios.get(API);
+      setProducts(res.data.products || res.data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // ADD PRODUCT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("image", image);
+    if (!name || !price || !image) {
+      alert("Please fill all fields");
+      return;
+    }
 
-    await axios.post(API, formData);
+    try {
+      setLoading(true);
 
-    setName("");
-    setPrice("");
-    setImage(null);
-    setPreview("");
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("image", image);
 
-    fetchProducts();
+      await axios.post(API, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // reset form
+      setName("");
+      setPrice("");
+      setImage(null);
+      setPreview("");
+
+      fetchProducts();
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Upload failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // DELETE PRODUCT
   const deleteProduct = async (id) => {
-    await axios.delete(`${API}/${id}`);
-    fetchProducts();
+    try {
+      await axios.delete(`${API}/${id}`);
+      fetchProducts();
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
   };
 
   return (
@@ -64,34 +95,43 @@ function Admin() {
         <input
           type="file"
           onChange={(e) => {
-            setImage(e.target.files[0]);
-            setPreview(URL.createObjectURL(e.target.files[0]));
+            const file = e.target.files[0];
+            setImage(file);
+            if (file) setPreview(URL.createObjectURL(file));
           }}
         />
 
         {preview && <img src={preview} className="preview" />}
 
-        <button type="submit">Add Product</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Uploading..." : "Add Product"}
+        </button>
       </form>
 
       <h3>Products</h3>
 
       {/* PRODUCT GRID */}
       <div className="admin-grid">
-        {products.map((p) => (
-          <div className="admin-card" key={p._id}>
-            <img
-              src={`https://glitzorabackend.onrender.com/uploads/${p.image}`}
-              alt={p.name}
-            />
+        {products.length === 0 ? (
+          <p>No products found</p>
+        ) : (
+          products.map((p) => (
+            <div className="admin-card" key={p._id}>
+              <img
+                src={`https://glitzorabackend.onrender.com/uploads/${p.image}`}
+                alt={p.name}
+              />
 
-            <div className="card-body">
-              <h4>{p.name}</h4>
-              <p>₹{p.price}</p>
-              <button onClick={() => deleteProduct(p._id)}>Delete</button>
+              <div className="card-body">
+                <h4>{p.name}</h4>
+                <p>₹{p.price}</p>
+                <button onClick={() => deleteProduct(p._id)}>
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
