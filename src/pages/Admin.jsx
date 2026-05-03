@@ -9,7 +9,7 @@ function Admin() {
   const [preview, setPreview] = useState("");
   const [products, setProducts] = useState([]);
 
-  const API = "http://localhost:5000/api/products";
+  const API = "https://glitzorabackend.onrender.com/api/products";
 
   const fetchProducts = async () => {
     const res = await axios.get(API);
@@ -81,7 +81,7 @@ function Admin() {
         {products.map((p) => (
           <div className="admin-card" key={p._id}>
             <img
-              src={`http://localhost:5000/uploads/${p.image}`}
+              src={`https://glitzorabackend.onrender.com/uploads/${p.image}`}
               alt={p.name}
             />
 

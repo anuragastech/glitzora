@@ -15,7 +15,7 @@ function Home() {
 
   const fetchProducts = async () => {
     const res = await axios.get(
-      `http://localhost:5000/api/products?page=${page}&limit=6`
+      `https://glitzorabackend.onrender.com/api/products?page=${page}&limit=6`
     );
 
     const newProducts = res.data.products;
