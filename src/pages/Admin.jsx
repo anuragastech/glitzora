@@ -12,11 +12,11 @@ function Admin() {
 
   const API = "https://glitzorabackend.onrender.com/api/products";
 
-  // FETCH PRODUCTS
+  // ✅ FETCH PRODUCTS (pagination-safe)
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(API);
-      setProducts(res.data.products || res.data);
+      const res = await axios.get(`${API}?page=1&limit=100`);
+      setProducts(res.data.products);
     } catch (err) {
       console.error("Fetch error:", err);
     }
@@ -26,7 +26,7 @@ function Admin() {
     fetchProducts();
   }, []);
 
-  // ADD PRODUCT
+  // ✅ ADD PRODUCT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,7 +64,7 @@ function Admin() {
     }
   };
 
-  // DELETE PRODUCT
+  // ✅ DELETE PRODUCT
   const deleteProduct = async (id) => {
     try {
       await axios.delete(`${API}/${id}`);
@@ -81,12 +81,14 @@ function Admin() {
       {/* FORM */}
       <form onSubmit={handleSubmit} className="admin-form">
         <input
+          type="text"
           placeholder="Product Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
 
         <input
+          type="number"
           placeholder="Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
@@ -110,7 +112,7 @@ function Admin() {
 
       <h3>Products</h3>
 
-      {/* PRODUCT GRID */}
+      {/* PRODUCTS GRID */}
       <div className="admin-grid">
         {products.length === 0 ? (
           <p>No products found</p>
@@ -125,6 +127,7 @@ function Admin() {
               <div className="card-body">
                 <h4>{p.name}</h4>
                 <p>₹{p.price}</p>
+
                 <button onClick={() => deleteProduct(p._id)}>
                   Delete
                 </button>
