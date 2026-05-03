@@ -49,7 +49,7 @@ function Home() {
         {products.map((p) => (
           <div className="card" key={p._id}>
             <img
-              src={`http://localhost:5000/uploads/${p.image}`}
+              src={`https://glitzorabackend.onrender.com/uploads/${p.image}`}
               alt={p.name}
             />
 
