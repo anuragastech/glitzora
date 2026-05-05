@@ -13,7 +13,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/admin9995937035@2016&@#######/Glitzora" element={<Admin />} />
+        <Route path="/admin-hiefhhfeihiewhiwhjiwhfiw-okj-glitzora" element={<Admin />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
 
