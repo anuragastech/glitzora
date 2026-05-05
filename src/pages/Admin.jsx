@@ -12,13 +12,13 @@ function Admin() {
 
   const API = "https://glitzorabackend.onrender.com/api/products";
 
-  // ✅ FETCH PRODUCTS (pagination-safe)
+  // FETCH PRODUCTS
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${API}?page=1&limit=100`);
       setProducts(res.data.products);
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error(err);
     }
   };
 
@@ -26,12 +26,12 @@ function Admin() {
     fetchProducts();
   }, []);
 
-  // ✅ ADD PRODUCT
+  // ADD PRODUCT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !price || !image) {
-      alert("Please fill all fields");
+      alert("Fill all fields");
       return;
     }
 
@@ -43,13 +43,8 @@ function Admin() {
       formData.append("price", price);
       formData.append("image", image);
 
-      await axios.post(API, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(API, formData);
 
-      // reset form
       setName("");
       setPrice("");
       setImage(null);
@@ -57,20 +52,19 @@ function Admin() {
 
       fetchProducts();
     } catch (err) {
-      console.error("Upload error:", err);
       alert("Upload failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ DELETE PRODUCT
+  // DELETE
   const deleteProduct = async (id) => {
     try {
       await axios.delete(`${API}/${id}`);
       fetchProducts();
     } catch (err) {
-      console.error("Delete error:", err);
+      console.error(err);
     }
   };
 
@@ -79,40 +73,42 @@ function Admin() {
       <h2>Admin Panel</h2>
 
       {/* FORM */}
-      <form onSubmit={handleSubmit} className="admin-form">
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+      <div className="form-wrapper">
+        <form onSubmit={handleSubmit} className="admin-form">
+          <input
+            type="text"
+            placeholder="Product Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
-        <input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
+          <input
+            type="number"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
 
-        <input
-          type="file"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            setImage(file);
-            if (file) setPreview(URL.createObjectURL(file));
-          }}
-        />
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              setImage(file);
+              if (file) setPreview(URL.createObjectURL(file));
+            }}
+          />
 
-        {preview && <img src={preview} className="preview" />}
+          {preview && <img src={preview} className="preview" />}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Add Product"}
-        </button>
-      </form>
+          <button type="submit" disabled={loading}>
+            {loading ? "Uploading..." : "Add Product"}
+          </button>
+        </form>
+      </div>
 
       <h3>Products</h3>
 
-      {/* PRODUCTS GRID */}
+      {/* GRID */}
       <div className="admin-grid">
         {products.length === 0 ? (
           <p>No products found</p>
