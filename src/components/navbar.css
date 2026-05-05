@@ -4,8 +4,18 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: #979191;
+  background: #142911;
   color: white;
+}
+.brand-title {
+  background: linear-gradient(45deg, #C5A100, #FFD700, #ffda47);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-title svg {
+  color: #e1c106;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
 }
 
 .nav-links a {
@@ -16,7 +26,7 @@
 }
 
 .nav-links a:hover {
-  color: #ff6a88;
+  color: #969393;
 }
 
 /* FOOTER */

@@ -14,7 +14,7 @@ function Contact() {
     const subject = "Customer Feedback";
     const body = `Name: ${form.name}\nMessage: ${form.message}`;
 
-    window.location.href = `mailto:yourmail@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:glitzora.style@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (

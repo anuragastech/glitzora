@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./home.css";
 
+
+import { FiShoppingBag } from "react-icons/fi";
+
 function Home() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
@@ -40,7 +43,12 @@ function Home() {
     <div>
       {/* HERO */}
       <div className="hero">
-        <h1>✨ Trendy Dress Collection 👗</h1>
+        {/* <h1>✨ Trendy Dress Collection 👗</h1> */}
+
+<h1 className="hero-title">
+  <FiShoppingBag className="icon" />
+  Glitzora Collection
+</h1>
         <p>New Arrivals | Premium Quality</p>
       </div>
 
