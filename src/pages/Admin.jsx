@@ -12,13 +12,13 @@ function Admin() {
 
   const API = "https://glitzorabackend.onrender.com/api/products";
 
-  // FETCH PRODUCTS
+  // ✅ FETCH PRODUCTS
   const fetchProducts = async () => {
     try {
       const res = await axios.get(`${API}?page=1&limit=100`);
       setProducts(res.data.products);
     } catch (err) {
-      console.error(err);
+      console.error("Fetch error:", err);
     }
   };
 
@@ -26,12 +26,12 @@ function Admin() {
     fetchProducts();
   }, []);
 
-  // ADD PRODUCT
+  // ✅ ADD PRODUCT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !price || !image) {
-      alert("Fill all fields");
+      alert("Please fill all fields");
       return;
     }
 
@@ -43,8 +43,13 @@ function Admin() {
       formData.append("price", price);
       formData.append("image", image);
 
-      await axios.post(API, formData);
+      await axios.post(API, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
+      // reset
       setName("");
       setPrice("");
       setImage(null);
@@ -52,19 +57,20 @@ function Admin() {
 
       fetchProducts();
     } catch (err) {
+      console.error("Upload error:", err);
       alert("Upload failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // DELETE
+  // ✅ DELETE PRODUCT
   const deleteProduct = async (id) => {
     try {
       await axios.delete(`${API}/${id}`);
       fetchProducts();
     } catch (err) {
-      console.error(err);
+      console.error("Delete error:", err);
     }
   };
 
@@ -98,7 +104,7 @@ function Admin() {
             }}
           />
 
-          {preview && <img src={preview} className="preview" />}
+          {preview && <img src={preview} className="preview" alt="preview" />}
 
           <button type="submit" disabled={loading}>
             {loading ? "Uploading..." : "Add Product"}
@@ -115,8 +121,10 @@ function Admin() {
         ) : (
           products.map((p) => (
             <div className="admin-card" key={p._id}>
+              
+              {/* ✅ FIXED IMAGE */}
               <img
-                src={`https://glitzorabackend.onrender.com/uploads/${p.image}`}
+                src={p.image?.url || "/no-image.png"}
                 alt={p.name}
               />
 
