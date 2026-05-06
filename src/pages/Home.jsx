@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./home.css";
-
-
 import { FiShoppingBag } from "react-icons/fi";
 
 function Home() {
@@ -17,38 +15,38 @@ function Home() {
   }, [page]);
 
   const fetchProducts = async () => {
-    const res = await axios.get(
-      `https://glitzorabackend.onrender.com/api/products?page=${page}&limit=6`
-    );
+    try {
+      const res = await axios.get(
+        `https://glitzorabackend.onrender.com/api/products?page=${page}&limit=6`
+      );
 
-    const newProducts = res.data.products;
+      const newProducts = res.data.products;
 
-    if (page === 1) {
-      // first load → replace
-      setProducts(newProducts);
-    } else {
-      // next pages → append + remove duplicates
-      setProducts((prev) => {
-        const all = [...prev, ...newProducts];
-        return [
-          ...new Map(all.map((item) => [item._id, item])).values(),
-        ];
-      });
+      if (page === 1) {
+        setProducts(newProducts);
+      } else {
+        setProducts((prev) => {
+          const all = [...prev, ...newProducts];
+          return [
+            ...new Map(all.map((item) => [item._id, item])).values(),
+          ];
+        });
+      }
+
+      setPages(res.data.pages);
+    } catch (err) {
+      console.error("Fetch error:", err);
     }
-
-    setPages(res.data.pages);
   };
 
   return (
     <div>
       {/* HERO */}
       <div className="hero">
-        {/* <h1>✨ Trendy Dress Collection 👗</h1> */}
-
-<h1 className="hero-title">
-  <FiShoppingBag className="icon" />
-  Glitzora Collection
-</h1>
+        <h1 className="hero-title">
+          <FiShoppingBag className="icon" />
+          Glitzora Collection
+        </h1>
         <p>New Arrivals | Premium Quality</p>
       </div>
 
@@ -56,8 +54,10 @@ function Home() {
       <div className="grid">
         {products.map((p) => (
           <div className="card" key={p._id}>
+            
+            {/* ✅ FIXED IMAGE */}
             <img
-              src={`https://glitzorabackend.onrender.com/uploads/${p.image}`}
+              src={p.image?.url || "/no-image.png"}
               alt={p.name}
             />
 
@@ -85,16 +85,6 @@ function Home() {
           </button>
         </div>
       )}
-
-      {/* FLOATING WHATSAPP */}
-      {/* <a
-        href={`https://wa.me/${phoneNumber}`}
-        className="whatsapp"
-        target="_blank"
-        rel="noreferrer"
-      >
-        💬
-      </a> */}
     </div>
   );
 }
